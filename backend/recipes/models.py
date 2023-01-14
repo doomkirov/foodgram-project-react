@@ -4,21 +4,32 @@ from users.models import User
 
 
 class Ingridient(models.Model):
-    title = models.CharField(max_length=100)
-    amount = models.SmallIntegerField(blank=True)
+    name = models.CharField(max_length=100)
     measurement_unit = models.CharField(max_length=30)
 
     def __str__(self):
-        return f'{self.title} - {self.amount} {self.measurement_unit}'
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = 'Ингридиент'
+        verbose_name_plural = 'Ингридиенты'
 
 
 class Tag(models.Model):
-    title = models.CharField(verbose_name='Тэг', max_length=100, unique=True)
-    hexcolor = models.CharField(max_length=7, default="#ffffff", unique=True)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(verbose_name='Тэг', max_length=100, unique=True)
+    hexcolor = models.CharField(
+        verbose_name='Цвет',
+        max_length=7,
+        default="#ffffff",
+        unique=True)
+    slug = models.SlugField(verbose_name='Уникальный ключ', unique=True)
 
     def __str__(self):
-        return self.title
+        return self.name
+
+    class Meta:
+        verbose_name = 'Тэг'
+        verbose_name_plural = 'Тэги'
 
 
 class Recipe(models.Model):
@@ -28,7 +39,7 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='Автор рецепта'
     )
-    title = models.CharField(
+    name = models.CharField(
         verbose_name='Название блюда',
         max_length=200,
     )
@@ -54,7 +65,7 @@ class Recipe(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return self.name
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -64,19 +75,21 @@ class Recipe(models.Model):
 class RecipeIngridient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт',
     )
     ingridient = models.ForeignKey(
         Ingridient,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Ингридиент',
     )
-    quantity = models.DecimalField(
+    quantity = models.PositiveSmallIntegerField(
         verbose_name='Количество',
-        max_digits=4,
-        decimal_places=1
     )
 
     class Meta:
+        verbose_name = 'Количество ингридиента'
+        verbose_name_plural = 'Количество ингридиентов'
         constraints = [
             models.UniqueConstraint(
                 fields=('recipe', 'ingridient'),
@@ -84,17 +97,24 @@ class RecipeIngridient(models.Model):
             )
         ]
 
+
 class Favorite(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='Рецепт',
     )
 
     class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
         constraints = [
             models.UniqueConstraint(
                 fields=(
@@ -103,4 +123,27 @@ class Favorite(models.Model):
                 ),
                 name='unique_favorite'
             )
+        ]
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='carts',
+        verbose_name='Пользователь',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='carts',
+        verbose_name='Рецепт',
+    )
+
+    class Meta:
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзина'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique shopping cart')
         ]

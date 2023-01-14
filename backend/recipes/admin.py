@@ -8,8 +8,7 @@ from .forms import RecipeForm
 class IngridientAdmin(admin.ModelAdmin):
     list_display = (
     'pk',
-    'title',
-    'amount',
+    'name',
     'measurement_unit'
 )
 
@@ -19,24 +18,24 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('tags',)
     list_display = (
         'author',
-        'title',
+        'name',
         'image',
         'text',
         'time',
     )
     list_editable = (
-        'title',
+        'name',
         'time'
     )
     search_fields = (
-        'title',
+        'name',
     )
 
 
 class TagAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'title',
+        'name',
         'hexcolor',
         'slug'
     )

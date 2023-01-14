@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AdminPasswordChangeForm
 
 from .models import User
 
+
 class UserChangeForm(forms.ModelForm):
     password = AdminPasswordChangeForm
 
@@ -11,14 +12,15 @@ class UserChangeForm(forms.ModelForm):
         model = User
         fields = ('password',)
 
+
 class UserAdmin(admin.ModelAdmin):
     form = UserChangeForm
     list_display = (
-    'username',
-    'first_name',
-    'last_name',
-    'email',
-    'role',
-)
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+    )
+
 
 admin.site.register(User, UserAdmin)

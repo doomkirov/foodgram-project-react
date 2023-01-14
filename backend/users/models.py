@@ -1,25 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class User(AbstractUser):
-    USER_ROLE = 'user'
-    ADMIN_ROLE = 'admin'
-    ROLES = [
-        (USER_ROLE, 'User'),
-        (ADMIN_ROLE, 'Administrator'),
-    ]
-    confirmation_code = models.CharField(
-        'Код подтверждения', blank=True, max_length=50
+    email = models.EmailField(
+        verbose_name='email',
+        unique=True,
+        max_length=254
     )
-    role = models.CharField(
-        'Роль', max_length=50, choices=ROLES, default='user'
-    )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
-
-    @property
-    def is_admin(self):
-        return self.role == 'admin'
+    def __str__(self) -> str:
+        return self.username
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -36,14 +29,18 @@ class Follow(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='follower',
+        verbose_name='Подписчик',
     )
     following = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='following',
+        verbose_name='Автор',
     )
 
     class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
         constraints = [
             models.UniqueConstraint(
                 fields=['follower', 'following'],
