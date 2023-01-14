@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Move to backend
         run: |
-          cd backend/
+          cd backend
 
       - name: Check out the repo
         uses: actions/checkout@v2 
@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Move to front
         run: |
-          cd ../frontend/
+          cd ../frontend
       - name: Check out the repo
         uses: actions/checkout@v2 
       - name: Set up Docker Buildx
