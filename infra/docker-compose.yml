@@ -1,11 +1,10 @@
 version: '3.3'
 services:
-
   frontend:
     image: doomkirov/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
-  
+
   nginx:
     image: nginx:1.19.3
     ports:
