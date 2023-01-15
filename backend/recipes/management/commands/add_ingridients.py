@@ -3,8 +3,7 @@ from csv import DictReader
 from django.core.management import BaseCommand
 from django.db.utils import IntegrityError
 
-from foodgram_api import settings
-from recipes.models import Ingridient
+from recipes.models import Ingredient
 
 
 def print_error(error, row):
@@ -14,18 +13,18 @@ def print_error(error, row):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Удаляем старые данные...')
-        Ingridient.objects.all().delete()
+        Ingredient.objects.all().delete()
         self.stdout.write(self.style.NOTICE('Заполняем базу данных...'))
 
         with open(
-                f'{settings.BASE_DIR}/../data/ingredients.csv',
+                'ingredients.csv',
                 mode='r',
                 encoding='utf-8',
         ) as table:
             reader = DictReader(table)
             for row in reader:
                 try:
-                    Ingridient.objects.get_or_create(**row)
+                    Ingredient.objects.get_or_create(**row)
                 except IntegrityError as error:
                     print_error(error, row)
                 except ValueError as error:

@@ -1,14 +1,14 @@
 from django.db.models import BooleanField, ExpressionWrapper, Q
 from django_filters.rest_framework import FilterSet, filters
 
-from recipes.models import Ingridient, Recipe
+from recipes.models import Ingredient, Recipe
 
 
-class IngridientFilter(FilterSet):
+class IngredientFilter(FilterSet):
     name = filters.CharFilter(method='filter_name')
 
     class Meta:
-        model = Ingridient
+        model = Ingredient
         fields = ('name',)
 
     def filter_name(self, queryset, name, value):
