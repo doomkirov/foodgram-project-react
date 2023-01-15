@@ -13,7 +13,7 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'color', 'slug')
 
 
-class RecipeIngredientInline(admin.InlineModelAdmin):
+class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     min_num = 1
 
