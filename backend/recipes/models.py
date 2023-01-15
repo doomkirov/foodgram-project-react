@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from users.models import User
@@ -40,6 +40,7 @@ class Tag(models.Model):
     )
 
     class Meta:
+        ordering = ['slug']
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -111,14 +112,21 @@ class RecipeIngredient(models.Model):
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name='Количество',
-        validators=(MinValueValidator(
-            limit_value=0.01,
-            message='Количество должно быть больше нуля'),
+        validators=(
+            MinValueValidator(
+                limit_value=0.01,
+                message='Количество должно быть больше нуля'
+            ),
+            MaxValueValidator(
+                limit_value=1001,
+                message='Максимально возможное количество превышено'
+            )
         ),
         default=1
     )
 
     class Meta:
+        ordering = ['recipe']
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
         constraints = [
@@ -148,6 +156,7 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        ordering = ['recipe']
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
         constraints = (
@@ -176,6 +185,7 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        ordering = ['recipe']
         verbose_name = 'Рецепт в корзине'
         verbose_name_plural = 'Рецепты в корзине'
         constraints = (

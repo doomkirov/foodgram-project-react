@@ -152,14 +152,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'back_media/')
 
 DJOSER = {
     'HIDE_USERS': False,
-    "LOGIN_FIELD": "email",
+    'LOGIN_FIELD': 'email',
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny'],
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']
     },
-    "SERIALIZERS": {
-        "user_create": "api.serializers.UsersCreateSerializer",
-        "user": "api.serializers.UsersSerializer",
-        "current_user": "api.serializers.UsersSerializer",
+    'SERIALIZERS': {
+        'user_create': 'api.serializers.UsersCreateSerializer',
+        'user': 'api.serializers.UsersSerializer',
+        'current_user': 'api.serializers.UsersSerializer',
     },
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

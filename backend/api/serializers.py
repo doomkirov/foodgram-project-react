@@ -218,10 +218,10 @@ class UsersCreateSerializer(UserCreateSerializer):
             'last_name',
             'password')
 
-        extra_kwargs = {"password": {"write_only": True}}
+        extra_kwargs = {'password': {'write_only': True}}
 
     def validate_username(self, value):
-        if value == "me":
+        if value == 'me':
             raise ValidationError(
                 'Невозможно создать пользователя с таким именем!'
             )

@@ -13,6 +13,11 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'color', 'slug')
 
 
+class RecipeIngredientInline(admin.InlineModelAdmin):
+    model = RecipeIngredient
+    min_num = 1
+
+
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'display_tags', 'favorite')
     list_filter = ('name', 'author', 'tags')
@@ -25,6 +30,7 @@ class RecipeAdmin(admin.ModelAdmin):
         ('tags', 'cooking_time'),
         'favorite'
     )
+    inlines = (RecipeIngredientInline, )
 
     def display_tags(self, obj):
         return ', '.join([tag.name for tag in obj.tags.all()])
