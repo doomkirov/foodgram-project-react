@@ -144,22 +144,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk):
         return self.action_post_delete(pk, ShoppingCartSerializer)
 
-    @action(detail=False)
+    @action(methods=['GET', ], detail=False)
     def download_shopping_cart(self, request):
         ingredients = RecipeIngredient.objects.filter(
-            recipe__cart__user=request.user).values(
-                'ingredient__name',
-                'ingredient__measurement_unit'
-            ).annotate(total_amount=Sum('amount'))
-        content_list = []
-        for ingredient in ingredients:
-            content_list.append(
-                f'{ingredient["ingredient__name"]} '
-                f'({ingredient["ingredient__measurement_unit"]}): '
-                f'{ingredient["total_amount"]}')
-        content = 'Ваш список покупок:\n\n' + '\n'.join(content_list)
-        filename = 'shopping_cart.txt'
-        file = HttpResponse(content, content_type='text/plain')
-        file['Content-Disposition'] = 'attachment; filename={0}'.format(
-            filename)
-        return file
+            recipe__shopping_cart__user=request.user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(amount=Sum('amount'))
+
+        shopping_list = '\n'.join([
+            f'- {ingredient["ingredient__name"]} '
+            f'({ingredient["ingredient__measurement_unit"]})'
+            f' - {ingredient["amount"]}'
+            for ingredient in ingredients
+        ])
+
+        filename = 'shopping_list.txt'
+        response = HttpResponse(shopping_list, content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+
+        return response
