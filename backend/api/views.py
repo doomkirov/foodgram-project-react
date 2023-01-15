@@ -131,6 +131,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response({'error': 'Этого рецепта нет в списке'},
                             status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'Непредвиденная ошибка'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     @action(methods=['POST', 'DELETE'], detail=True)
     def favorite(self, request, pk):
