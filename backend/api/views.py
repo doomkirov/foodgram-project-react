@@ -1,31 +1,23 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import (
-    IsAuthenticated,
-    AllowAny,
-    SAFE_METHODS,
-    BasePermission,
-    IsAuthenticatedOrReadOnly
-)
+from rest_framework.permissions import (SAFE_METHODS, AllowAny, BasePermission,
+                                        IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from users.models import User, Follow
-from recipes.models import Ingredient, Tag, Recipe
+from recipes.models import Ingredient, Recipe, Tag
+from users.models import Follow, User
+
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import LimitPagination
-from .serializers import (
-    UsersSerializer,
-    FollowSerializer,
-    IngredientSerializer,
-    TagSerializer,
-    RecipeSerializer,
-    FavoriteSerializer,
-    ShoppingCartSerializer,
-)
+from .serializers import (FavoriteSerializer, FollowSerializer,
+                          IngredientSerializer, RecipeSerializer,
+                          ShoppingCartSerializer, TagSerializer,
+                          UsersSerializer)
 
 
 class IsAuthorOrReadOnly(BasePermission):
