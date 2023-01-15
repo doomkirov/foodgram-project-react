@@ -16,11 +16,14 @@ jobs:
     - name: Install dependencies
       run: | 
         python -m pip install --upgrade pip
+        pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
         pip install -r backend/requirements.txt
 
-    - name: Test with flake8 and django tests
+    - name: Test with flake8
       run: |
         cd backend
+        python -m flake8
+
 
   build_backend_and_push_to_docker_hub:
     name: Push Backend image to Docker Hub
@@ -62,7 +65,7 @@ jobs:
         script: |
           sudo docker-compose down -v
           sudo docker-compose stop
-          sudo docker-compose rm web
+          sudo docker-compose rm backend
           touch .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -71,6 +74,10 @@ jobs:
           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           sudo docker-compose up -d --build
+          sudo docker-compose exec backend python manage.py makemigrations --no-input
+          sudo docker-compose exec backend python manage.py migrate
+          sudo docker-compose exec backend python manage.py add_ingridients
+          sudo docker-compose exec backend python manage.py collectstatic --no-input
 
   send_message:
     runs-on: ubuntu-latest
