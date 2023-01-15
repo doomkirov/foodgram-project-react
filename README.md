@@ -1,4 +1,4 @@
-![Foodgram workflow status](https://github.com/doomkirov/foodgram-project-react/actions/workflows/foodgram-project-react_workflow.yml/badge.svg)
+[![API for Foodgram project workflow!](https://github.com/doomkirov/foodgram-project-react/actions/workflows/foodgram-project-react_workflow.yml/badge.svg)]
 # Проект Foodgram
 
 Адрес проекта: http://158.160.35.198
