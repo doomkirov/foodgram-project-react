@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
@@ -9,7 +10,7 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny, BasePermission,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from recipes.models import Ingredient, Recipe, Tag
+from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from users.models import Follow, User
 
 from .filters import IngredientFilter, RecipeFilter
@@ -68,6 +69,10 @@ class UserViewSet(UserViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response({'error': 'Вы не подписаны на этого пользователя'},
                             status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'Непредвиденная ошибка'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
@@ -137,9 +142,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def download_shopping_cart(self, request):
-        response = HttpResponse(content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename="filename.txt"'
-
-        response.write('Hello')
-
-        return response
+        ingredients = RecipeIngredient.objects.filter(
+            recipe__cart__user=request.user).values(
+                'ingredient__name',
+                'ingredient__measurement_unit'
+            ).annotate(total_amount=Sum('amount'))
+        content_list = []
+        for ingredient in ingredients:
+            content_list.append(
+                f'{ingredient["ingredient__name"]} '
+                f'({ingredient["ingredient__measurement_unit"]}): '
+                f'{ingredient["total_amount"]}')
+        content = 'Ваш список покупок:\n\n' + '\n'.join(content_list)
+        filename = 'shopping_cart.txt'
+        file = HttpResponse(content, content_type='text/plain')
+        file['Content-Disposition'] = 'attachment; filename={0}'.format(
+            filename)
+        return file
